@@ -12,3 +12,7 @@
 
 ![step 3](screenshots/Screenshot_78.png)
 ![step 3](screenshots/Screenshot_79.png)
+
+## Задание 4: скрипт из задания два
+![step 4](screenshots/Screenshot_82.png)
+![step 4](screenshots/Screenshot_83.png)
