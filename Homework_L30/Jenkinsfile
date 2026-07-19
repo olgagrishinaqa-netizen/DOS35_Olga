@@ -6,15 +6,7 @@ pipeline {
         DOCKER_IMAGE = "olga/web-app:latest"
     }
 
-    stages {
-        stage('Clone') {
-            steps {
-                // Получаем код из репозитория
-                git branch: 'main', url: 'https://github.com/your-repo/project.git'
-            }
-        }
-
-        stage('Build') {
+           stage('Build') {
             steps {
                 // Сборка образа (задание 4)
                 sh "docker build -t ${DOCKER_IMAGE} ."
