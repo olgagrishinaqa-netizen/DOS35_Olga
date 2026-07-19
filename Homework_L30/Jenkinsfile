@@ -6,7 +6,8 @@ pipeline {
         DOCKER_IMAGE = "olga/web-app:latest"
     }
 
-           stage('Build') {
+    stages {
+        stage('Build') {
             steps {
                 // Сборка образа (задание 4)
                 sh "docker build -t ${DOCKER_IMAGE} ."
