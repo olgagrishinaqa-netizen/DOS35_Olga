@@ -1,44 +1,89 @@
 pipeline {
     agent any
 
+    parameters {
+        string(name: 'TAG', defaultValue: 'latest', description: 'Тег для собираемого Docker-образа')
+        booleanParam(name: 'RUN_TESTS', defaultValue: true, description: 'Запускать ли этап тестирования')
+    }
+
     environment {
-        APP_NAME = "web-app-container"
-        DOCKER_IMAGE = "olga/web-app:latest"
+        IMAGE_NAME = 'my-web-app'
+        CONTAINER_NAME = 'web-app-container'
+        // Укажи здесь ссылку на свой Git-репозиторий
+        GIT_URL = 'https://github.com/olgagrishinaqa-netizen/Olga_Grishina_DOS35.git'
     }
 
     stages {
+        // Клонирование репозитория по ссылке
+        stage('Checkout') {
+            steps {
+                echo "Клонирование репозитория из ${env.GIT_URL}..."
+
+                // Вариант 1: Если репозиторий публичный:
+                git branch: 'main', url: "${env.GIT_URL}"
+
+                // Вариант 2: Если репозиторий приватный (нужен логин/пароль или токен, сохраненный в Jenkins):
+                // git branch: 'main', credentialsId: 'id-твоих-credentials-в-jenkins', url: "${env.GIT_URL}"
+            }
+        }
+
+        // Этап Build: Сборка приложения
         stage('Build') {
             steps {
-                // Сборка образа (задание 4)
-                sh "docker build -t ${DOCKER_IMAGE} ."
+                echo 'Сборка проекта...'
+                sh 'mvn clean package -DskipTests'
             }
         }
 
-        stage('Test') {
+        // Этап Test: Тестирование
+       stage('Test') {
+            when {
+                expression { params.RUN_TESTS == true }
+            }
             steps {
-                // Запуск тестов внутри контейнера (задание 5)
-                sh "docker run --rm ${DOCKER_IMAGE} npm test"
+                echo 'Запуск тестов...'
+                sh 'mvn test'
             }
         }
 
+        // Сборка Docker-образа и очистка старого контейнера
+        stage('Docker Build & Cleanup') {
+            steps {
+                script {
+                    echo 'Очистка предыдущей версии контейнера...'
+                    try {
+                        sh "docker stop ${CONTAINER_NAME}"
+                        sh "docker rm ${CONTAINER_NAME}"
+                    } catch (Exception e) {
+                        echo 'Старый контейнер не найден, продолжаем...'
+                    }
+
+                    echo 'Создание нового Docker-образа...'
+                    sh "docker build -t ${IMAGE_NAME}:${params.TAG} ."
+                }
+            }
+        }
+
+        // Этап Deploy: Запуск и проверка
         stage('Deploy') {
             steps {
-                // Очистка старых контейнеров (задание 11)
-                sh "docker stop ${APP_NAME} || true"
-                sh "docker rm ${APP_NAME} || true"
-                // Запуск нового контейнера (задание 8)
-                sh "docker run -d -p 80:8080 --name ${APP_NAME} ${DOCKER_IMAGE}"
-            }
+                script {
+                    echo 'Запуск нового Docker-контейнера...'
+                    sh "docker run -d --name ${CONTAINER_NAME} -p 8080:8080 ${IMAGE_NAME}:${params.TAG}"
+
+                    echo 'Проверка доступности веб-приложения...'
+                    sh 'sleep 3 && curl -I http://localhost:8080 || exit 1'
+                }
+           }
         }
     }
 
     post {
-        // Уведомление о статусе (задание 7)
-        failure {
-            echo "Pipeline failed! Sending alert..."
-        }
         success {
-            echo "Pipeline finished successfully."
+            echo 'Пайплайн успешно завершен!'
+        }
+        failure {
+            echo 'Произошла ошибка во время выполнения пайплайна.'
         }
     }
 }
