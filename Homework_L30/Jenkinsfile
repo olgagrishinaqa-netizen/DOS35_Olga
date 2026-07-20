@@ -64,7 +64,7 @@ pipeline {
             steps {
                 script {
                     echo 'Запуск нового Docker-контейнера...'
-                    sh "docker run -d --name ${CONTAINER_NAME} -p 8080:8080 ${IMAGE_NAME}:${params.TAG}"
+                    sh "docker run -d --name ${CONTAINER_NAME} -p 8081:8080 ${IMAGE_NAME}:${params.TAG}"
 
                     echo 'Проверка доступности веб-приложения...'
                     sh 'sleep 3 && curl -I http://localhost:8080 || exit 1'
