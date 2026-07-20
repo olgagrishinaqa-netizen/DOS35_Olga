@@ -6,8 +6,8 @@ WORKDIR /app
 # Создаем простейший индекс-файл для проверки доступности
 RUN echo "Hello from DevOps Homework!" > index.html
 
-# Устанавливаем простой python-сервер для имитации веб-приложения на порту 8080
-RUN apt-get update && apt-get install -y python3
+# Устанавливаем python3 с помощью менеджера пакетов apk (так как это Alpine)
+RUN apk add --no-cache python3
 
 EXPOSE 8080
 
