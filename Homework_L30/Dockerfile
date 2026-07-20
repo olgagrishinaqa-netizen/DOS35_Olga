@@ -1,5 +1,5 @@
 # Используем легкий образ с Java
-FROM openjdk:17-slim
+FROM eclipse-temurin:17-jdk-slim
 
 WORKDIR /app
 
