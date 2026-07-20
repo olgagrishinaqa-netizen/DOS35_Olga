@@ -1,7 +1,14 @@
-FROM node:18-alpine
+# Используем легкий образ с Java
+FROM openjdk:17-slim
+
 WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
+
+# Создаем простейший индекс-файл для проверки доступности
+RUN echo "Hello from DevOps Homework!" > index.html
+
+# Устанавливаем простой python-сервер для имитации веб-приложения на порту 8080
+RUN apt-get update && apt-get install -y python3
+
 EXPOSE 8080
-CMD ["npm", "start"]
+
+CMD ["python3", "-m", "http.server", "8080"]
