@@ -5,7 +5,7 @@
     
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Координаты проекта (GAV) -->
+    <!-- Координаты проекта -->
     <groupId>com.example</groupId>
     <artifactId>my-web-app</artifactId>
     <version>1.0-SNAPSHOT</version>
@@ -19,7 +19,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <!-- Внешние библиотеки (зависимости) -->
+    <!-- Зависимости -->
     <dependencies>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -38,7 +38,6 @@
                 <version>3.11.0</version>
             </plugin>
             
-            <!-- ДОБАВЬТЕ ЭТОТ ПЛАГИН ДЛЯ УКАЗАНИЯ MAIN-КЛАССА -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -54,3 +53,5 @@
             </plugin>
         </plugins>
     </build>
+
+</project>
